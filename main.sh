@@ -196,12 +196,12 @@ rm -rf $PSYSTEM/system/etc/firmware || true
 cp -Raf $SSYSTEM/system/etc/firmware/* $PVENDOR/firmware/ || true
 
 
-cp -f $OUTP/libwifi-hal64.so $PVENDOR/lib64/libwifi-hal.so
+cp -f $FILES/libwifi-hal64.so $PVENDOR/lib64/libwifi-hal.so
 chmod 644 $PVENDOR/lib64/libwifi-hal.so
 chown -hR root:root $PVENDOR/lib64/libwifi-hal.so
 setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/lib64/libwifi-hal.so
 
-cp -f $OUTP/libwifi-hal32.so $PVENDOR/lib/libwifi-hal.so
+cp -f $FILES/libwifi-hal32.so $PVENDOR/lib/libwifi-hal.so
 chmod 644 $PVENDOR/lib/libwifi-hal.so
 chown -hR root:root $PVENDOR/lib/libwifi-hal.so
 setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/lib/libwifi-hal.so
