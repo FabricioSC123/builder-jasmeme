@@ -46,16 +46,6 @@ mount -o rw,noatime $OUTP/vendorport.img $PVENDOR
 mount -o rw,noatime $OUTP/systema2.img $SSYSTEM
 mount -o rw,noatime $OUTP/vendora2.img $SVENDOR
 
-
-#BUILD BOOT IMAGE
-PATCHDATE=$(sudo grep ro.build.version.security_patch= $PSYSTEM/system/build.prop | sed "s/ro.build.version.security_patch=//g"; )
-if [[ -z $PATCHDATE ]]
-then
-echo "failed to find security patch date, aborting" && exit
-fi
-su -c "$CURRENTDIR/buildbootimage.sh $PATCHDATE $SOURCEROM $OUTP $CURRENTDIR" $CURRENTUSER
-
-
 mkdir $PSYSTEM/system/addon.d
 setfattr -h -n security.selinux -v u:object_r:system_file:s0 $PSYSTEM/system/addon.d
 chmod 755 $PSYSTEM/system/addon.d
@@ -117,9 +107,6 @@ setfattr -h -n security.selinux -v u:object_r:vendor_configs_file:s0 $PVENDOR/et
 chown -hR root:root $PVENDOR/etc/fstab.qcom
 
 
-
-
-
 #KEYMASTER
 rm -f $PVENDOR/etc/init/android.hardware.keymaster@4.0-service-qti.rc
 cp -af $SVENDOR/etc/init/android.hardware.keymaster@3.0-service-qti.rc $PVENDOR/etc/init/android.hardware.keymaster@3.0-service-qti.rc
@@ -152,7 +139,6 @@ cp -f $FILES/bootanimation.zip $PSYSTEM/system/media/bootanimation.zip
 chmod 644 $PSYSTEM/system/media/bootanimation.zip
 chown root:root $PSYSTEM/system/media/bootanimation.zip
 setfattr -h -n security.selinux -v u:object_r:system_file:s0 $PSYSTEM/system/media/bootanimation.zip
-
 
 cp -af $FILES/fingerprint/app/FingerprintExtensionService/FingerprintExtensionService.apk $PVENDOR/app/FingerprintExtensionService/FingerprintExtensionService.apk
 setfattr -h -n security.selinux -v u:object_r:vendor_app_file:s0 $PVENDOR/app/FingerprintExtensionService/FingerprintExtensionService.apk
@@ -301,27 +287,4 @@ rmdir $PSYSTEM
 rmdir $PVENDOR
 rmdir $SSYSTEM
 rmdir $SVENDOR
-
-e2fsck -y -f $OUTP/systemport.img
-resize2fs $OUTP/systemport.img 786432
-
-
-img2simg $OUTP/systemport.img $OUTP/sparsesystem.img
-rm $OUTP/systemport.img
-$TOOLS/img2sdat/img2sdat.py -v 4 -o $OUTP/zip -p system $OUTP/sparsesystem.img
-rm $OUTP/sparsesystem.img
-img2simg $OUTP/vendorport.img $OUTP/sparsevendor.img
-rm $OUTP/vendorport.img
-$TOOLS/img2sdat/img2sdat.py -v 4 -o $OUTP/zip -p vendor $OUTP/sparsevendor.img
-rm $OUTP/sparsevendor.img
-brotli -j -v -q 6 $OUTP/zip/system.new.dat
-brotli -j -v -q 6 $OUTP/zip/vendor.new.dat
-
-cd $OUTP/zip
-zip -ry $OUTP/10_MIUI_12_wayne_$ROMVERSION.zip *
-cd $CURRENTDIR
-rm -rf $OUTP/zip
-chown -hR $CURRENTUSER:$CURRENTUSER $OUTP
-
-rm $OUTP/systema2.img
-rm $OUTP/vendora2.img
+./last.sh
