@@ -46,8 +46,8 @@ jobs:
     - name: Creando Port
       run: |
         cd miui/jasmeme
-        wget -O rom.zip ${{ github.event.inputs.ROM_URL }}
-        wget -O stock.tgz https://bigota.d.miui.com/V11.0.28.0.QDIMIXM/jasmine_global_images_V11.0.28.0.QDIMIXM_20210702.0000.00_10.0_d88fa668a6.tgz
+        aria2c -o rom.zip ${{ github.event.inputs.ROM_URL }}
+        aria2c -o stock.tgz https://bigota.d.miui.com/V11.0.28.0.QDIMIXM/jasmine_global_images_V11.0.28.0.QDIMIXM_20210702.0000.00_10.0_d88fa668a6.tgz
         ./port.sh rom.zip stock.tgz
 
     - name: Subiendo Port
