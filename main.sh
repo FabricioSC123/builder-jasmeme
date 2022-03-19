@@ -61,7 +61,7 @@ mv $PVENDOR/etc/device_features/lavender.xml $PVENDOR/etc/device_features/wayne.
 sed -i "/persist.camera.HAL3.enabled=/c\persist.camera.HAL3.enabled=1
 /persist.vendor.camera.HAL3.enabled=/c\persist.vendor.camera.HAL3.enabled=1
 /ro.product.model=/c\ro.product.model=MI 6X
-/ro.build.id=/c\ro.build.id=MIUI 12 by Nebrassy
+/ro.build.id=/c\ro.build.id=MIUI 12 by FabricioSC
 /persist.vendor.camera.exif.model=/c\persist.vendor.camera.exif.model=MI 6X
 /ro.product.name=/c\ro.product.name=wayne
 /ro.product.device=/c\ro.product.device=wayne
@@ -132,13 +132,6 @@ cp -af $SVENDOR/lib/libmmcamera* $PVENDOR/lib/
 cp -af $SVENDOR/lib64/libmmcamera* $PVENDOR/lib64/
 
 cp -f $SVENDOR/lib/hw/camera.sdm660.so $PVENDOR/lib/hw/
-
-
-#BOOTANIMATION
-cp -f $FILES/bootanimation.zip $PSYSTEM/system/media/bootanimation.zip
-chmod 644 $PSYSTEM/system/media/bootanimation.zip
-chown root:root $PSYSTEM/system/media/bootanimation.zip
-setfattr -h -n security.selinux -v u:object_r:system_file:s0 $PSYSTEM/system/media/bootanimation.zip
 
 cp -af $FILES/fingerprint/app/FingerprintExtensionService/FingerprintExtensionService.apk $PVENDOR/app/FingerprintExtensionService/FingerprintExtensionService.apk
 setfattr -h -n security.selinux -v u:object_r:vendor_app_file:s0 $PVENDOR/app/FingerprintExtensionService/FingerprintExtensionService.apk
