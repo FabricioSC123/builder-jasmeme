@@ -36,7 +36,6 @@ $TOOLS/sdat2img/sdat2img.py $OUTP/vendor.transfer.list $OUTP/vendor.new.dat $OUT
 rm $OUTP/vendor.img $OUTP/system.img $OUTP/system.new.dat $OUTP/vendor.new.dat $OUTP/system.transfer.list $OUTP/vendor.transfer.list
 
 
-unalias cp || true
 mkdir $PSYSTEM || true
 mkdir $PVENDOR || true
 mkdir $SVENDOR || true
@@ -96,8 +95,6 @@ sed -i "/ro.product.odm.device=/c\ro.product.odm.device=wayne
 
 rm -rf $PVENDOR/firmware
 cp -Raf $SVENDOR/firmware $PVENDOR/firmware
-
-
 
 
 #VENDOR
@@ -190,11 +187,6 @@ sed -i "469 c\        <version>1.0</version>
 477d
 478d
 479d" $PVENDOR/etc/vintf/manifest.xml
-
-
-rm -rf $PSYSTEM/system/etc/firmware || true
-cp -Raf $SSYSTEM/system/etc/firmware/* $PVENDOR/firmware/ || true
-
 
 cp -f $FILES/libwifi-hal64.so $PVENDOR/lib64/libwifi-hal.so
 chmod 644 $PVENDOR/lib64/libwifi-hal.so
