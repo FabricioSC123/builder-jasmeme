@@ -11,14 +11,15 @@ on:
         description: 'Rom Miui Lavender'
         required: true
         default: 'https://bigota.d.miui.com/V12.5.3.0.QFGMIXM/miui_LAVENDERGlobal_V12.5.3.0.QFGMIXM_0baf420181_10.0.zip'
-
-
-
+      GITHUB_TOKEN:
+        description: 'Token de Github'
+        required: true
+        default: ''
+      
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-18.04
-    
+    runs-on: ubuntu-latest
     steps:
     - name: Checkeando 
       uses: actions/checkout@main
@@ -47,12 +48,23 @@ jobs:
         aria2c -o stock.tgz https://bigota.d.miui.com/V11.0.28.0.QDIMIXM/jasmine_global_images_V11.0.28.0.QDIMIXM_20210702.0000.00_10.0_d88fa668a6.tgz
         ./port.sh rom.zip stock.tgz
 
-    - name: Subiendo Port
-      uses: softprops/action-gh-release@v1
-      with:
-        files: miui/jasmeme/out/10_MIUI_12_wayne_*.zip
-        name: 10_MIUI_12_${{ github.event.inputs.DEVICE_NAME }}
-        tag_name: wayne-"$(date +%d/%m/%Y-%H:%M)"
-        body: Rom Port from ${{ github.event.inputs.DEVICE_NAME }} by FabricioSC
+    - name: Creando Release
+      uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN:  ${{ secrets.TEST }}
+        GITHUB_TOKEN: ${{ github.event.inputs.GITHUB_TOKEN }}
+      with:
+        tag_name: MIUI 12 Port from wayne - "$(date +%d/%m/%Y-%H:%M)"
+        release_name:  10_MIUI_12_${{ github.event.inputs.DEVICE_NAME }}
+        body: Port From ${{ github.event.inputs.DEVICE_NAME }}
+        draft: false
+        prerelease: false
+      
+    - name: Subiendo Port
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.event.inputs.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: miui/jasmeme/out/10_MIUI_12_wayne_*.zip
+        asset_name: 10_MIUI_12_wayne_"$(date +%d/%m/%Y-%H:%M)"
+        asset_content_type: application/zip
