@@ -58,14 +58,23 @@ jobs:
         prerelease: false
       
     - name: Subiendo Port
-      id: upload-release-asset 
+      id: upload-release-asset-system 
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ github.event.inputs.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: |
-                 10_MIUI_12_wayne_system.zip
-                 10_MIUI_12_wayne_vendor.zip   
-        asset_name: 10_MIUI_12_wayne_${{ github.run_id }}.zip
+        asset_path: 10_MIUI_12_wayne_system.zip   
+        asset_name: 10_MIUI_12_wayne_system-${{ github.run_id }}.zip
+        asset_content_type: application/zip
+   
+    - name: Subiendo Port
+      id: upload-release-asset-vendor 
+      uses: actions/upload-release-asset@v1
+      env: 
+        GITHUB_TOKEN: ${{ github.event.inputs.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: 10_MIUI_12_wayne_vendor.zip
+        asset_name: 10_MIUI_12_wayne_vendor-${{ github.run_id }}.zip
         asset_content_type: application/zip
