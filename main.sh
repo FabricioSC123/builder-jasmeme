@@ -17,7 +17,7 @@ set -e
 rm -rf $OUTP || true
 mkdir $OUTP
 chown $CURRENTUSER:$CURRENTUSER $OUTP
-cp -Raf $CURRENTDIR/zip $OUTP/
+cp -Raf $CURRENTDIR/zips $OUTP/
 
 unzip -d $OUTP $PORTZIP system.transfer.list vendor.transfer.list system.new.dat.br vendor.new.dat.br
 tar --wildcards -xf $STOCKTAR */images/vendor.img */images/system.img
@@ -262,7 +262,11 @@ sed -i "124 i \
 
 ROMVERSION=$(grep ro.system.build.version.incremental= $PSYSTEM/system/build.prop | sed "s/ro.system.build.version.incremental=//g"; )
 sed -i "s%DATE%$(date +%d/%m/%Y)%g
-s/ROMVERSION/$ROMVERSION/g" $OUTP/zip/META-INF/com/google/android/updater-script
+s/ROMVERSION/$ROMVERSION/g" $OUTP/zips/system/META-INF/com/google/android/updater-script
+
+ROMVERSION=$(grep ro.system.build.version.incremental= $PSYSTEM/system/build.prop | sed "s/ro.system.build.version.incremental=//g"; )
+sed -i "s%DATE%$(date +%d/%m/%Y)%g
+s/ROMVERSION/$ROMVERSION/g" $OUTP/zips/vendor/META-INF/com/google/android/updater-script
 
 umount $PSYSTEM
 umount $PVENDOR
@@ -272,4 +276,4 @@ rmdir $PSYSTEM
 rmdir $PVENDOR
 rmdir $SSYSTEM
 rmdir $SVENDOR
-./last.sh
+./last.sh $ROMVERSION

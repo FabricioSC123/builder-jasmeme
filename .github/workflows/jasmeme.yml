@@ -23,48 +23,49 @@ jobs:
     steps:
     - name: Checkeando 
       uses: actions/checkout@main
-      
-    - name: Limpiando y Actualizando
+    
+    - name: Set variables
       run: |
-        sudo apt -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
-        sudo apt update -y
-        sudo apt upgrade -y 
-         
+        echo "::set-output name=date::$(date +%F)"
+      id: var
+     
     - name: Clonando Repositorio
       run: |
-        mkdir miui
-        cd miui
         git clone https://github.com/FabricioSC123/builder-jasmeme.git -b ${{ github.event.inputs.DEVICE_NAME }} jasmeme
         
     - name: Instalando Packages
       run: |
-        cd miui/jasmeme
+        cd jasmeme
         sudo ./prep.sh
 
     - name: Creando Port
       run: |
-        cd miui/jasmeme
+        cd jasmeme
         aria2c -o rom.zip ${{ github.event.inputs.ROM_URL }}
         aria2c -o stock.tgz https://bigota.d.miui.com/V11.0.28.0.QDIMIXM/jasmine_global_images_V11.0.28.0.QDIMIXM_20210702.0000.00_10.0_d88fa668a6.tgz
         ./port.sh rom.zip stock.tgz
 
     - name: Creando Release
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ github.event.inputs.GITHUB_TOKEN }}
       with:
-        tag_name: MIUI 12 Port from wayne - "$(date +%d/%m/%Y-%H:%M)"
-        release_name:  10_MIUI_12_${{ github.event.inputs.DEVICE_NAME }}
+        tag_name: ${{ github.run_id }}
+        release_name:  10_MIUI_12_${{ github.event.inputs.DEVICE_NAME }}-${{ github.run_id }}
         body: Port From ${{ github.event.inputs.DEVICE_NAME }}
         draft: false
         prerelease: false
       
     - name: Subiendo Port
+      id: upload-release-asset 
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ github.event.inputs.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: miui/jasmeme/out/10_MIUI_12_wayne_*.zip
-        asset_name: 10_MIUI_12_wayne_"$(date +%d/%m/%Y-%H:%M)"
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: |
+                 10_MIUI_12_wayne_system.zip
+                 10_MIUI_12_wayne_vendor.zip   
+        asset_name: 10_MIUI_12_wayne_${{ github.run_id }}.zip
         asset_content_type: application/zip
