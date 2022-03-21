@@ -18,11 +18,11 @@ resize2fs $OUTP/systemport.img 786432
 
 img2simg $OUTP/systemport.img $OUTP/sparsesystem.img
 rm $OUTP/systemport.img
-$TOOLS/img2sdat/img2sdat.py -v 4 -o $OUTP/zip/system -p system $OUTP/sparsesystem.img
+$TOOLS/img2sdat/img2sdat.py -v 4 -o $OUTP/zips/system -p system $OUTP/sparsesystem.img
 rm $OUTP/sparsesystem.img
 img2simg $OUTP/vendorport.img $OUTP/sparsevendor.img
 rm $OUTP/vendorport.img
-$TOOLS/img2sdat/img2sdat.py -v 4 -o $OUTP/zip/vendor -p vendor $OUTP/sparsevendor.img
+$TOOLS/img2sdat/img2sdat.py -v 4 -o $OUTP/zips/vendor -p vendor $OUTP/sparsevendor.img
 rm $OUTP/sparsevendor.img
 brotli -j -v -q 6 $OUTP/zips/system/system.new.dat
 brotli -j -v -q 6 $OUTP/zips/vendor/vendor.new.dat
